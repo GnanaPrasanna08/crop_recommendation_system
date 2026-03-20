@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Crop Recommendation</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>🌱 Smart Crop Recommendation System</h1>
+</div>
+
+<div class="container mt-5">
+
+<div class="form-box">
+
+<h3 class="text-center mb-4">Enter Soil & Climate Details</h3>
+
+{% if error %}
+<div class="alert alert-danger text-center">{{ error }}</div>
+{% endif %}
+
+<form action="/predict" method="POST">
+
+<div class="row">
+
+<div class="col-md-4 mb-3">
+<label class="form-label">Enter Nitrogen (N)</label>
+<input type="number" class="form-control" name="Nitrogen" placeholder="e.g. 80" required>
+</div>
+
+<div class="col-md-4 mb-3">
+<label class="form-label">Enter Phosphorus (P)</label>
+<input type="number" class="form-control" name="Phosporus" placeholder="e.g. 40" required>
+</div>
+
+<div class="col-md-4 mb-3">
+<label class="form-label">Enter Potassium (K)</label>
+<input type="number" class="form-control" name="Potassium" placeholder="e.g. 50" required>
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-4 mb-3">
+<label class="form-label">Temperature (°C)</label>
+<input type="number" step="0.1" class="form-control" name="Temperature" placeholder="e.g. 25" required>
+</div>
+
+<div class="col-md-4 mb-3">
+<label class="form-label">Humidity (%)</label>
+<input type="number" step="0.1" class="form-control" name="Humidity" placeholder="e.g. 70" required>
+</div>
+
+<div class="col-md-4 mb-3">
+<label class="form-label">pH Value</label>
+<input type="number" step="0.1" class="form-control" name="Ph" placeholder="e.g. 6.5" required>
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-12 mb-3">
+<label class="form-label">Rainfall (mm)</label>
+<input type="number" step="0.1" class="form-control" name="Rainfall" placeholder="e.g. 200" required>
+</div>
+
+</div>
+
+<div class="text-center">
+<button class="btn btn-success">🌾 Predict Crop</button>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+{% if crops %}
+
+<div class="container mt-5">
+
+<h2 class="text-center result-title mb-4">🌾 Crop Recommendation Results</h2>
+
+<!-- PRIMARY -->
+<h3 class="text-center text-success mb-3">🥇 Primary Crop Recommendation</h3>
+
+<div class="row">
+
+<div class="col-md-4 mb-4">
+
+<div class="card crop-card shadow position-relative">
+
+<span class="rank-badge rank1">🥇</span>
+
+<img src="{{ url_for('static', filename='images/' + crops[0].lower() + '.jpg') }}"
+     class="crop-img"
+     onerror="this.src='https://source.unsplash.com/300x200/?plant'">
+
+<div class="card-body text-center">
+
+<h4>{{ crops[0] }}</h4>
+
+<p><b>{{ confidences[0] }}%</b> match</p>
+
+<!-- ✅ FIXED: dynamic description -->
+<p>{{ description }}</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ALTERNATE -->
+<h3 class="text-center text-primary mt-4 mb-3">🌱 Alternate Crop Recommendation</h3>
+
+<div class="row">
+
+{% for i in range(1, crops|length) %}
+
+<div class="col-md-4 mb-4">
+
+<div class="card crop-card shadow position-relative">
+
+<span class="rank-badge rank{{i+1}}">
+{% if i == 1 %}🥈{% endif %}
+{% if i == 2 %}🥉{% endif %}
+</span>
+
+<img src="{{ url_for('static', filename='images/' + crops[i].lower() + '.jpg') }}"
+     class="crop-img"
+     onerror="this.src='https://source.unsplash.com/300x200/?farm,crop'">
+
+<div class="card-body text-center">
+
+<h4>{{ crops[i] }}</h4>
+
+<p><b>{{ confidences[i] }}%</b> match</p>
+
+<p>Alternative suitable crop based on similar conditions.</p>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endif %}
+
+<footer class="text-center mt-5 mb-3">
+<p>🌿 AI Powered Crop Decision System</p>
+</footer>
+
+</body>
+</html>
